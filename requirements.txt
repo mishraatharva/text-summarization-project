@@ -1,0 +1,16 @@
+numpy 
+pandas 
+matplotlib
+seaborn
+nltk
+regex
+scikit-learn
+transformers[torch]
+from-root
+google-cloud-storage
+python-dotenv
+rouge_score
+sentencepiece
+evaluate
+protobuf
+tiktoken

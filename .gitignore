@@ -1,0 +1,19 @@
+# Virtual environment
+venv/
+
+# Output artifacts
+artifacts/
+
+# Logs
+logs/
+
+# Environment variables
+.env
+
+# Google Cloud credentials
+gcp_credentials/
+radiant-anchor-455909-e0-827ca3c48aed.json
+
+# OS-specific files (optional but useful)
+.DS_Store
+Thumbs.db
