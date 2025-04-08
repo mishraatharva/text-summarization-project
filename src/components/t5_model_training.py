@@ -1,5 +1,5 @@
 import os
-from src.entity.artifacts_entity import DataTransformationArtifacts
+from src.entity.artifacts_entity import DataTransformationArtifacts, T5ModelTrainerArtifacts
 from src.entity.config_entity import T5ModelTrainerConfig, SentencePieceTrainerConfig
 import logging
 import pandas as pd
@@ -90,9 +90,8 @@ class T5ModelTraining:
         
         train_subset = dataset["train"].select(range(1000))
         validation_subset = dataset["validation"].select(range(1000))
-        test_subset = dataset["test"].select(range(1000))
         logging.info("final 'train_sunset', 'test_subset' and 'validation_subset' created to 1k data points each")
-        return train_subset, test_subset, validation_subset
+        return train_subset, validation_subset
     
     
     
@@ -109,49 +108,70 @@ class T5ModelTraining:
 
 
     def train_t5_model(self):
+        
         """Train T5-model"""
+        
         logging.info("inside train_t5_model of T5ModelTraining class")
-
-        train_subset, test_subset, validation_subset = self.create_dataset()
+        
+        train_subset, validation_subset = self.create_dataset()
+        
         
         self.tokenizer = T5Tokenizer.from_pretrained(self.sentence_piece_config.FINAL_MODEL_PATH)
         logging.info("loaded -> saved tokenizer")
-
+        
+        
         tokenized_train = train_subset.map(self.preprocess_function, batched=True)
         logging.info("train_subset tokenization complete")
-
+        
+        
         tokenized_validation = validation_subset.map(self.preprocess_function, batched=True)
         logging.info("validation_subset tokenization complete")
-
-        # tokenized_test = test_subset.map(self.preprocess_function, batched=True)
-        # logging.info("test_subset tokenization complete")
-
-        data_collator = DataCollatorForSeq2Seq(self.tokenizer)
-
-
+        
+        
         training_args = Seq2SeqTrainingArguments(
-            output_dir = self.model_training_config.output_dir,
-            evaluation_strategy = self.model_training_config.evaluation_strategy,
-            eval_steps = self.model_training_config.eval_steps,
-            logging_steps = self.model_training_config.logging_steps,
-            logging_dir = self.model_training_config.logging_dir,
-            report_to = self.model_training_config.report_to,
-            save_strategy = self.model_training_config.save_strategy,
-            learning_rate = self.model_training_config.learning_rate,
-            per_device_train_batch_size = self.model_training_config.per_device_train_batch_size,
-            per_device_eval_batch_size = self.model_training_config.per_device_eval_batch_size,
-            weight_decay = self.model_training_config.weight_decay,
-            save_total_limit = self.model_training_config.save_total_limit,
-            num_train_epochs = self.model_training_config.num_train_epochs,
-            predict_with_generate = self.model_training_config.predict_with_generate,
-            generation_max_length = self.model_training_config.generation_max_length,
-            generation_num_beams = self.model_training_config.generation_num_beams,
-            load_best_model_at_end = self.model_training_config.load_best_model_at_end,
-            metric_for_best_model = self.model_training_config.metric_for_best_model,
-            greater_is_better = self.model_training_config.greater_is_better,
-            logging_first_step = self.model_training_config.logging_first_step,
-            # label_smoothing_factor=0.1
+            output_dir = self.model_training_config.OUTPUT_DIR,
+
+            eval_strategy = self.model_training_config.EVALUATION_STRATEGY,
+            
+            eval_steps = self.model_training_config.EVAL_STEPS,
+            
+            learning_rate = self.model_training_config.LEARNING_RATE,
+            
+            per_device_train_batch_size = self.model_training_config.PER_DEVICE_TRAIN_BATCH_SIZE,
+            
+            per_device_eval_batch_size = self.model_training_config.PER_DEVICE_TRAIN_EVAL_SIZE,
+            
+            weight_decay = self.model_training_config.WEIGHT_DECAY,
+            
+            save_total_limit = self.model_training_config.SAVE_TOTAL_LIMIT,
+            
+            num_train_epochs = self.model_training_config.NUM_TRAIN_EPOCHS,
+            
+            predict_with_generate = self.model_training_config.PERDICT_WITH_GENERATOR,
+            
+            generation_max_length = self.model_training_config.GENERATION_MAX_LENGTH, 
+            
+            generation_num_beams = self.model_training_config.GENERATION_NUM_BEAMS,
+            
+            logging_dir = self.model_training_config.LOGGING_DIR,
+            
+            logging_steps = self.model_training_config.LOGGING_STEPS,
+            
+            save_strategy = self.model_training_config.SAVE_STRATEGY,
+            
+            logging_first_step = self.model_training_config.LOGGING_FIRST_STEP,
+            
+            greater_is_better = self.model_training_config.GREATER_IS_BETTER,
+            
+            metric_for_best_model = self.model_training_config.METRIC_FOR_BEST_MODEL,
+            
+            load_best_model_at_end = self.model_training_config.LOAD_BEST_MODEL_AT_END
             )
+        logging.info("Training parameter initialized")
+        
+        
+        data_collator = DataCollatorForSeq2Seq(self.tokenizer)
+        
         
         trainer = Seq2SeqTrainer(
                 model=T5ForConditionalGeneration.from_pretrained('t5-small'),
@@ -163,7 +183,11 @@ class T5ModelTraining:
                 compute_metrics=self.compute_metrics,
             )
         
+        logging.info("trainer object created")
+        
+        logging.info("t5-model training started")
         trainer.train()
+        logging.info("t5-model training completed")
 
 
 
@@ -173,15 +197,22 @@ class T5ModelTraining:
             os.makedirs(self.model_training_config.TRAINED_TOKENIZER_PATH,exist_ok=True)
             os.makedirs(self.model_training_config.TOKENIZER_TEXT_PATH,exist_ok=True)
             # os.makedirs(self.model_training_config.LOGS_DIR_PATH,exist_ok=True)
-
+            
             logging.info(f"path to save t5-model at {self.model_training_config.TRAINED_MODEL_PATH}")
             logging.info(f"path to save t5-model at {self.model_training_config.TRAINED_TOKENIZER_PATH}")
             logging.info(f"path to save t5-model at {self.model_training_config.TOKENIZER_TEXT_PATH}")
             # logging.info(f"path to save t5-model at {self.model_training_config.LOGS_DIR_PATH}")
             # print(os.path.join(self.sentence_piece_config.VOCAB_PATH))
             
-
             self.create_tokenizer()
-
+            self.train_t5_model()
+            
+            t5_model_trainer_artifacts = T5ModelTrainerArtifacts(
+                    trained_model_path = self.model_training_config.TRAINED_MODEL_PATH,
+                    trained_tokenizer_path = self.sentence_piece_config.FINAL_MODEL_PATH
+            )
+            
+            return t5_model_trainer_artifacts
+            
         except Exception as e:
             print(e)

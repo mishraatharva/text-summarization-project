@@ -17,3 +17,6 @@ Also, trained sentencepiece tokenizer on custom dataset.
 ### Acknowledgments:
 
 This project utilizes the Hugging Face Transformers library, sentencepiece tokenizer and Flask for deployment.
+
+### Screenshots:
+<!-- put screenshot of ui after Flask development -->

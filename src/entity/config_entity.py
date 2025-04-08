@@ -64,31 +64,28 @@ class T5ModelTrainerConfig:
         self.TOKENIZER_TEXT_DIR: str = os.path.join(os.getcwd(),ARTIFACTS_DIR,MODEL_TRAINER_ARTIFACTS_DIR)
         self.TOKENIZER_TEXT_PATH = os.path.join(self.TOKENIZER_TEXT_DIR,TEXT_FILE_NAME)
 
-        self.output_dir="./results",
-        self.evaluation_strategy="epoch",
-        self.eval_steps=100,
-        self.logging_steps=100,
-        self.logging_dir="./logs",
-        self.report_to="all",
-        self.save_strategy="epoch",
-        self.learning_rate=1e-5,
-        self.per_device_train_batch_size=16,
-        self.per_device_eval_batch_size=16,
-        self.weight_decay=0.01,
-        self.save_total_limit=3,
-        self.num_train_epochs=3,
-        self.predict_with_generate=True,
-        self.generation_max_length=150,
-        self.generation_num_beams=6,
-        self.load_best_model_at_end=True,
-        self.metric_for_best_model="loss",
-        self.greater_is_better=False,
-        self.logging_first_step=True,
+        self.OUTPUT_DIR = self.TRAINED_MODEL_PATH
+        self.EVALUATION_STRATEGY = "epoch"
+        self.EVAL_STEPS = 100
+        self.LOGGING_STEPS = 100
+        self.LOGGING_DIR = os.path.join(ARTIFACTS_DIR,"t5-logs")
+        self.SAVE_STRATEGY = "epoch"
+        self.LEARNING_RATE = 1e-5
+        self.PER_DEVICE_TRAIN_BATCH_SIZE = 16
+        self.PER_DEVICE_TRAIN_EVAL_SIZE = 16
+        self.WEIGHT_DECAY = 0.01
+        self.SAVE_TOTAL_LIMIT = 3
+        self.NUM_TRAIN_EPOCHS = 1
+        self.PERDICT_WITH_GENERATOR = True
+        self.GENERATION_MAX_LENGTH = 150
+        self.GENERATION_NUM_BEAMS = 2
+        self.LOAD_BEST_MODEL_AT_END = True
+        self.METRIC_FOR_BEST_MODEL = "loss"
+        self.GREATER_IS_BETTER = False
+        self.LOGGING_FIRST_STEP = True
 
         # self.LOGS_DIR: str = os.path.join(os.getcwd(),ARTIFACTS_DIR,MODEL_TRAINER_ARTIFACTS_DIR)
         # self.LOGS_DIR_PATH = os.path.join(self.LOGS_DIR,LOGS_DIR)
-
-
 
 
 # @dataclass
