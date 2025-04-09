@@ -88,14 +88,19 @@ class T5ModelTrainerConfig:
         # self.LOGS_DIR_PATH = os.path.join(self.LOGS_DIR,LOGS_DIR)
 
 
-# @dataclass
-# class ModelEvaluationConfig: 
-#     def __init__(self):
-#         self.MODEL_EVALUATION_MODEL_DIR: str = os.path.join(os.getcwd(),ARTIFACTS_DIR, MODEL_EVALUATION_ARTIFACTS_DIR)
-#         self.BEST_MODEL_DIR_PATH: str = os.path.join(self.MODEL_EVALUATION_MODEL_DIR,BEST_MODEL_DIR)
-#         self.BUCKET_NAME = BUCKET_NAME 
-#         self.MODEL_NAME = MODEL_NAME 
+@dataclass
+class ModelEvaluationConfig: 
+    def __init__(self):
+        self.TRAINED_MODEL_DIR: str = os.path.join(os.getcwd(),ARTIFACTS_DIR,MODEL_TRAINER_ARTIFACTS_DIR) 
+        self.TRAINED_MODEL_PATH = os.path.join(self.TRAINED_MODEL_DIR,TRAINED_MODEL_NAME)
+    
 
+        self.TRAINED_TOKENIZER_DIR: str = os.path.join(os.getcwd(),ARTIFACTS_DIR,MODEL_TRAINER_ARTIFACTS_DIR)
+        self.TRAINED_TOKENIZER_PATH = os.path.join(self.TRAINED_TOKENIZER_DIR,TRAINED_TOKENIZER_NAME)
+
+        self.BATCH_SIZE = 16
+
+        self.EPOCH = 1
 
 
 # @dataclass

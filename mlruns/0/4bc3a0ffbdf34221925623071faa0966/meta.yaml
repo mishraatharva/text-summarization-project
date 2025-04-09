@@ -1,0 +1,15 @@
+artifact_uri: file:///U:/nlp_project/text_summarization/mlruns/0/4bc3a0ffbdf34221925623071faa0966/artifacts
+end_time: 1744194225230
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 4bc3a0ffbdf34221925623071faa0966
+run_name: bittersweet-loon-80
+run_uuid: 4bc3a0ffbdf34221925623071faa0966
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1744194225190
+status: 3
+tags: []
+user_id: Naruto

@@ -1,0 +1,15 @@
+artifact_uri: file:///U:/nlp_project/text_summarization/mlruns/0/54abf87f322242559159c73619933de8/artifacts
+end_time: 1744194754390
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 54abf87f322242559159c73619933de8
+run_name: flawless-colt-78
+run_uuid: 54abf87f322242559159c73619933de8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1744194742530
+status: 3
+tags: []
+user_id: Naruto

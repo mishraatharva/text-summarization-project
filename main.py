@@ -1,8 +1,9 @@
 from src.pipeline.stage_01_ingestion_pipeline import IngestionPipeline
 from src.pipeline.stage_02_transformation_pipeline import TransformationPipeline
 from src.pipeline.stage_03_training_pipeline import T5TrainingPipeline
+from src.pipeline.stage_04_evaluation_pipeline import T5EvaluationPipeline
 
-from src.entity.artifacts_entity import DataIngestionArtifacts, DataTransformationArtifacts
+from src.entity.artifacts_entity import DataIngestionArtifacts, DataTransformationArtifacts, T5ModelTrainerArtifacts
 
 from src.constants import *
 from src.logger import logging
@@ -36,33 +37,38 @@ warnings.filterwarnings("ignore")
 
 
 ###############################
-# start model training
+# start data ingestion
 ###############################
 
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
 
-# # try:
-# #     stage = "INGESTION STAGE"
-# #     logging.info(F">>>>>>>>>>>>>>>>{stage}-STARTED<<<<<<<<<<<<<<<<<")
-# #     training_pipeline = IngestionPipeline()
-# #     data_ingestion_artifacts = training_pipeline.run_pipeline()
-# #     logging.info(F">>>>>>>>>>>>>>>>{stage}-COMPLITED<<<<<<<<<<<<<<<<<")
-# # except Exception as e:
-# #     print(e)
+try:
+    stage = "INGESTION STAGE"
+    logging.info(F">>>>>>>>>>>>>>>>{stage}-STARTED<<<<<<<<<<<<<<<<<")
+    training_pipeline = IngestionPipeline()
+    data_ingestion_artifacts = training_pipeline.run_pipeline()
+    logging.info(F">>>>>>>>>>>>>>>>{stage}-COMPLITED<<<<<<<<<<<<<<<<<")
+except Exception as e:
+    print(e)
+
+###############################
+# start data trainsformation
+###############################
+
+try:
+    data_ingestion_artifacts = DataIngestionArtifacts(raw_data_file_path = r"U:\nlp_project\text_summarization\artifacts\row_data\Reviews.csv")
+    stage = "TRANSFORMATION STAGE"
+    logging.info(F">>>>>>>>>>>>>>>>{stage}-STARTED<<<<<<<<<<<<<<<<<")
+    training_pipeline = TransformationPipeline()
+    data_transformation_artifacts = training_pipeline.run_pipeline(data_ingestion_artifacts)
+    logging.info(F">>>>>>>>>>>>>>>>{stage}-COMPLITED<<<<<<<<<<<<<<<<<")
+except Exception as e:
+    print(e)
 
 
-
-# # try:
-# #     data_ingestion_artifacts = DataIngestionArtifacts(raw_data_file_path = r"U:\nlp_project\text_summarization\artifacts\row_data\Reviews.csv")
-# #     stage = "TRANSFORMATION STAGE"
-# #     logging.info(F">>>>>>>>>>>>>>>>{stage}-STARTED<<<<<<<<<<<<<<<<<")
-# #     training_pipeline = TransformationPipeline()
-# #     data_transformation_artifacts = training_pipeline.run_pipeline(data_ingestion_artifacts)
-# #     logging.info(F">>>>>>>>>>>>>>>>{stage}-COMPLITED<<<<<<<<<<<<<<<<<")
-# # except Exception as e:
-# #     print(e)
-
-
+###############################
+# t5 model training
+###############################
 
 try:
     data_transformation_artifacts = DataTransformationArtifacts(transformed_data_path = r"U:\nlp_project\text_summarization\artifacts\processed_data\cleaned_reviews.csv",
@@ -80,21 +86,26 @@ except Exception as e:
     print(e)
 
 
+###############################
+# model evaluation
+###############################
 
-# try:
-#     stage = "EVALUATION STAGE"
-#     logging.info(F">>>>>>>>>>>>>>>>{stage}-STARTED<<<<<<<<<<<<<<<<<")
-#     evaluation_pipeline = T5EvaluationPipeline()
-#     evaluation_pipeline.run_pipeline(model_training_artifacts)
-#     logging.info(F">>>>>>>>>>>>>>>>{stage}-COMPLITED<<<<<<<<<<<<<<<<<")
-# except Exception as e:
-#     print(e)
 
-# from transformers import T5Tokenizer
-# from src.entity.config_entity import SentencePieceTrainerConfig
-# sentence_piece_config = SentencePieceTrainerConfig()
+try:
+    model_training_artifacts = T5ModelTrainerArtifacts(
+            trained_model_path = r"U:\nlp_project\text_summarization\artifacts\t5_model\t5-model\checkpoint-63",
+            trained_tokenizer_path = r"U:\nlp_project\text_summarization\artifacts\t5_model\t5-tokenizer\t5_tokenizer_hf"
+    )
 
-# print("Path:",sentence_piece_config.FINAL_MODEL_PATH)
-# print("Type:", type(sentence_piece_config.FINAL_MODEL_PATH))
-# tokenizer = T5Tokenizer.from_pretrained(sentence_piece_config.FINAL_MODEL_PATH)
-# print("Type:", type(tokenizer))
+    data_transformation_artifacts = DataTransformationArtifacts(transformed_data_path = r"U:\nlp_project\text_summarization\artifacts\processed_data\cleaned_reviews.csv",
+                                                           contraction_mapping_path = r"U:\nlp_project\text_summarization\artifacts\contraction_data\CONTRACTION_MAPPING.json",
+                                                           train_data_path = r"U:\nlp_project\text_summarization\artifacts\processed_data\train_data.csv",
+                                                           test_data_path = r"U:\nlp_project\text_summarization\artifacts\processed_data\test_data.csv",
+                                                           validation_data_path = r"U:\nlp_project\text_summarization\artifacts\processed_data\validation_data.csv")
+    stage = "EVALUATION STAGE"
+    logging.info(F">>>>>>>>>>>>>>>>{stage}-STARTED<<<<<<<<<<<<<<<<<")
+    evaluation_pipeline = T5EvaluationPipeline()
+    evaluation_pipeline.run_pipeline(data_transformation_artifacts, model_training_artifacts)
+    logging.info(F">>>>>>>>>>>>>>>>{stage}-COMPLITED<<<<<<<<<<<<<<<<<")
+except Exception as e:
+    print(e)

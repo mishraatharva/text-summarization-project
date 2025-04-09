@@ -22,6 +22,6 @@ class T5ModelTrainerArtifacts:
 
 
 
-# @dataclass
-# class ModelEvaluationArtifacts:
-#     is_model_accepted: bool 
+@dataclass
+class ModelEvaluationArtifacts:
+    is_model_accepted: bool 
